@@ -48,8 +48,8 @@ HTTP Response: 200
              - KEY	VALUE
                 - Content-Type - application/json
                 - X-Auth-Token	- token (Oauth2)
-                - fiware-service - itm
-                - fiware-servicepath - /archvek/SS26
+                - fiware-service - ***
+                - fiware-servicepath - /******/SS26
              - BODY → raw → JSON - { "alarm": { "value": true, "type": "Boolean"} }
              - BUZZER ON AND buzzer turns ON physically.
               
