@@ -19,10 +19,10 @@
 // =====================
 
 // WiFi network name
-const char* ssid = "ITMHDTest";
+const char* ssid = "I******t";
 
 // WiFi password
-const char* password = "GK2018!!gk";
+const char* password = "G*******gk";
 
 // =====================
 // FLASK SERVER URLS
@@ -30,11 +30,11 @@ const char* password = "GK2018!!gk";
 
 // Flask API endpoint for sending motion data
 const char* motionUrl =
-"http://192.168.0.120:5050/motion"; // IP Address has to be changed - ifconfig
+"http://192.1**.0.***:5050/motion"; // IP Address has to be changed - ifconfig
 
 // Flask API endpoint for reading alarm state
 const char* alarmUrl =
-"http://192.168.0.120:5050/alarm";
+"http://192.1**.0.***:5050/alarm";
 
 // =====================
 // SETUP
