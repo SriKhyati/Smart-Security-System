@@ -9,30 +9,94 @@ The system now supports:
 - Interactive dashboard visualization
 
 ## System Architecture
-
-```mermaid
-flowchart TD
-    A[ESP32 Sensors] --> B[Flask Backend API]
-    B --> C[FIWARE Orion Context Broker]
-    C --> D[FIWARE Cygnus]
-    D --> E[MySQL Database]
-    E --> F[Grafana Dashboard]
-
-    A1[DHT11 Sensor] --> A
-    A2[PIR Sensor] --> A
-    A3[HC-SR04 Ultrasonic Sensor] --> A
-    A4[Buzzer Alarm] --> A
+```text
+ ┌──────────────┐
+ │   Sensors    │
+ │──────────────│
+ │ DHT11        │
+ │ PIR          │
+ │ HC-SR04      │
+ │ Keypad       │
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │    ESP32     │
+ │──────────────│
+ │ RGB LED      │
+ │ Buzzer       │
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │ Flask Backend│
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │ FIWARE Orion │
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │    Cygnus    │
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │    MySQL     │
+ └──────┬───────┘
+        │
+        ▼
+ ┌──────────────┐
+ │   Grafana    │
+ └──────────────┘
 ```
 
 HARDWARE COMPONENTS:
 
-| Component                 | Purpose                           |
-| ------------------------- | --------------------------------- |
-| ESP32                     | Main Microcontroller              |
-| PIR Sensor                | Motion Detection                  |
-| HC-SR04 Ultrasonic Sensor | Distance Measurement              |
-| DHT11 Sensor              | Temperature & Humidity Monitoring |
-| Buzzer                    | Alarm Notification                |
+| Component | Purpose |
+|------------|------------|
+| ESP32 DevKit | Main controller |
+| DHT11 Sensor | Temperature & humidity sensing |
+| PIR Motion Sensor | Motion detection |
+| HC-SR04 Ultrasonic Sensor | Distance measurement |
+| 4×4 Keypad | System arming/disarming |
+| RGB LED | Status indication |
+| Active Buzzer | Alarm notification |
+| Breadboard | Circuit prototyping |
+| Jumper Wires | Component connections |
+
+Hardware Connections:
+| Component                           | Pin/Signal     | ESP32 GPIO |
+| ----------------------------------- | -------------- | ---------- |
+| DHT11 Temperature & Humidity Sensor | DATA           | GPIO 4     |
+| DHT11 Temperature & Humidity Sensor | VCC            | 3.3V       |
+| DHT11 Temperature & Humidity Sensor | GND            | GND        |
+| PIR Motion Sensor                   | OUT            | GPIO 19    |
+| PIR Motion Sensor                   | VCC            | 5V         |
+| PIR Motion Sensor                   | GND            | GND        |
+| HC-SR04 Ultrasonic Sensor           | TRIG           | GPIO 5     |
+| HC-SR04 Ultrasonic Sensor           | ECHO           | GPIO 18    |
+| HC-SR04 Ultrasonic Sensor           | VCC            | 5V         |
+| HC-SR04 Ultrasonic Sensor           | GND            | GND        |
+| Active Buzzer                       | Signal (+)     | GPIO 15    |
+| Active Buzzer                       | GND (-)        | GND        |
+| RGB LED (Red)                       | Red Channel    | GPIO 21    |
+| RGB LED (Green)                     | Green Channel  | GPIO 22    |
+| RGB LED (Blue)                      | Blue Channel   | GPIO 23    |
+| RGB LED                             | Common Cathode | GND        |
+| 4×4 Keypad                          | Row 1 (R1)     | GPIO 13    |
+| 4×4 Keypad                          | Row 2 (R2)     | GPIO 12    |
+| 4×4 Keypad                          | Row 3 (R3)     | GPIO 14    |
+| 4×4 Keypad                          | Row 4 (R4)     | GPIO 27    |
+| 4×4 Keypad                          | Column 1 (C1)  | GPIO 26    |
+| 4×4 Keypad                          | Column 2 (C2)  | GPIO 25    |
+| 4×4 Keypad                          | Column 3 (C3)  | GPIO 33    |
+| 4×4 Keypad                          | Column 4 (C4)  | GPIO 32    |
+
+Hardware Setup:
+<img width="876" height="385" alt="fizzing fig" src="https://github.com/user-attachments/assets/630b38cb-4b1e-4222-a9c0-7e1204ec82be" />
 
 SOFTWARE COMPONENTS:
 - Python Flask
@@ -44,7 +108,7 @@ SOFTWARE COMPONENTS:
 
 IMPLEMENTED FEATURES
 
-1. Real-Time Sensor Monitoring\
+-> 1. Real-Time Sensor Monitoring\
 The ESP32 continuously reads data from:
 
 DHT11 Sensor
@@ -62,7 +126,7 @@ Buzzer
 - Activated when motion is detected
 
 
-2. Data Transmission\
+-> 2. Data Transmission\
 Sensor readings are sent from ESP32 to the Flask backend through HTTP requests.
 
 Example reading:
@@ -81,7 +145,7 @@ Backend response:
 
 The 204 response confirms successful updates to Orion Context Broker.
 
-3. FIWARE Integration\
+-> 3. FIWARE Integration\
 Orion Context Broker\
 The Flask backend updates a Smart Security entity inside Orion.
 
@@ -106,7 +170,7 @@ Subscription Status:
   "description": "Notify Cygnus"
 }
 
-4. Data Persistence
+-> 4. Data Persistence
 Sensor readings are automatically stored in MySQL using Cygnus.
 
 Stored Information:
@@ -121,16 +185,18 @@ This enables historical analysis and long-term monitoring.
 
 GRAFANA DASHBOARD\
 An interactive dashboard was created to visualize security and environmental data.
+
+Visualization:
 <img width="1093" height="532" alt="image" src="https://github.com/user-attachments/assets/7d17987f-eda5-490e-8e94-f84dd992eef5" />
 
 
 Dashboard Panels
 
-- System Status
-Displays: SYSTEM ARMED
+- System Status\
+Displays: SYSTEM ARMED\
 Indicates whether the security system is active.
 
-- Intrusion Detection
+- Intrusion Detection\
 Shows the latest motion detection status.
 
 Values:
@@ -153,9 +219,9 @@ Visualization Type: Gauge
 Thresholds:
 | Range    | Status |
 | -------- | ------ |
-| 0 – 30   | Dry    |
-| 30 – 60  | Normal |
-| 60 – 100 | Humid  |
+| 0 – 30 %  | Dry    |
+| 30 – 60 %  | Normal |
+| 60 – 100 % | Humid  |
 
 - Distance Monitoring\
 Visualization Type: Time Series Graph\
