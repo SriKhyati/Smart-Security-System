@@ -231,7 +231,7 @@ Displays object proximity measurements from the ultrasonic sensor.
 Contains:\
 -> Timestamp\
 -> Sensor Attribute\
--> Sensor Value\
+-> Sensor Value
 
 Provides historical records of all security events.
 
