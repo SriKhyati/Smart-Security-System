@@ -95,9 +95,6 @@ Hardware Connections:
 | 4×4 Keypad                          | Column 3 (C3)  | GPIO 33    |
 | 4×4 Keypad                          | Column 4 (C4)  | GPIO 32    |
 
-Hardware Setup:
-<img width="876" height="385" alt="fizzing fig" src="https://github.com/user-attachments/assets/630b38cb-4b1e-4222-a9c0-7e1204ec82be" />
-
 SOFTWARE COMPONENTS:
 - Python Flask
 - FIWARE Orion Context Broker
