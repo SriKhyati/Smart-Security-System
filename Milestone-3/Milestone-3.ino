@@ -1,28 +1,6 @@
-//
-// ============================================================
-// SMART SECURITY SYSTEM + FIWARE INTEGRATION
-// FINAL STABLE VERSION
-// ============================================================
-//
-// FEATURES:
-// - Password protected security system
-// - PIR motion detection
-// - Ultrasonic intrusion detection
-// - DHT11 monitoring
-// - RGB status indication
-// - Buzzer alarm
-// - Alarm pause mode
-// - WiFi connectivity
-// - Flask backend communication
-// - FIWARE integration
-//
-// ============================================================
+// SMART SECURITY SYSTEM 
 
-
-
-// ============================================================
 // LIBRARIES
-// ============================================================
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -30,8 +8,6 @@
 
 #include <Keypad.h>
 #include <DHT.h>
-
-
 
 // ============================================================
 // WIFI CONFIGURATION
@@ -41,18 +17,12 @@ const char* ssid = "ITMHDTest";
 
 const char* password = "GK2018!!gk";
 
-
-
 // ============================================================
 // FLASK BACKEND URL
 // ============================================================
-//192.168.0.120 // 192.168.0.120 //192.168.0.120
-
 
 const char* serverName =
 "http://192.168.0.120:5050/security";
-
-
 
 // ============================================================
 // DHT11 CONFIGURATION
@@ -64,15 +34,11 @@ const char* serverName =
 
 DHT dht(DHTPIN, DHTTYPE);
 
-
-
 // ============================================================
 // PIR SENSOR
 // ============================================================
 
 #define PIR_PIN 19
-
-
 
 // ============================================================
 // ULTRASONIC SENSOR
@@ -81,8 +47,6 @@ DHT dht(DHTPIN, DHTTYPE);
 #define TRIG_PIN 5
 
 #define ECHO_PIN 18
-
-
 
 // ============================================================
 // RGB LED
@@ -94,15 +58,11 @@ DHT dht(DHTPIN, DHTTYPE);
 
 #define BLUE_PIN 23
 
-
-
 // ============================================================
 // BUZZER
 // ============================================================
 
 #define BUZZER_PIN 15
-
-
 
 // ============================================================
 // KEYPAD
@@ -147,8 +107,6 @@ Keypad keypad = Keypad(
   COLS
 );
 
-
-
 // ============================================================
 // SECURITY VARIABLES
 // ============================================================
@@ -167,16 +125,12 @@ unsigned long alarmStartTime = 0;
 
 const unsigned long alarmDuration = 5000;
 
-
-
 // ============================================================
 // RGB FUNCTION
 // ============================================================
-//
 // BLUE  = DISARMED
 // GREEN = ARMED
 // RED   = ALERT
-//
 
 void setColor(
   bool red,
@@ -200,8 +154,6 @@ void setColor(
   );
 }
 
-
-
 // ============================================================
 // BUZZER FUNCTIONS
 // ============================================================
@@ -221,8 +173,6 @@ void buzzerOff() {
     LOW
   );
 }
-
-
 
 // ============================================================
 // WRONG PIN ALERT
@@ -252,11 +202,9 @@ void wrongPINAlert() {
 
     delay(200);
   }
-
-  //
+  
   // Restore LED state
-  //
-
+  
   if (systemArmed) {
 
     setColor(
@@ -275,8 +223,6 @@ void wrongPINAlert() {
     );
   }
 }
-
-
 
 // ============================================================
 // ULTRASONIC DISTANCE FUNCTION
@@ -315,9 +261,7 @@ float getDistance() {
   float distance =
       duration * 0.034 / 2;
 
-  //
   // Remove invalid values
-  //
 
   if (
       distance <= 0 ||
@@ -329,8 +273,6 @@ float getDistance() {
 
   return distance;
 }
-
-
 
 // ============================================================
 // ARM SYSTEM
@@ -346,9 +288,7 @@ void armSystem() {
 
   buzzerOff();
 
-  //
   // GREEN = SYSTEM ARMED
-  //
 
   setColor(
     LOW,
@@ -362,8 +302,6 @@ void armSystem() {
     "SYSTEM ARMED"
   );
 }
-
-
 
 // ============================================================
 // DISARM SYSTEM
@@ -379,10 +317,8 @@ void disarmSystem() {
 
   buzzerOff();
 
-  //
   // BLUE = SYSTEM DISARMED
-  //
-
+  
   setColor(
     LOW,
     LOW,
@@ -396,8 +332,6 @@ void disarmSystem() {
   );
 }
 
-
-
 // ============================================================
 // TRIGGER ALARM
 // ============================================================
@@ -408,9 +342,7 @@ void triggerAlarm() {
 
   alarmStartTime = millis();
 
-  //
   // RED = ALERT
-  //
 
   setColor(
     HIGH,
@@ -427,8 +359,6 @@ void triggerAlarm() {
   );
 }
 
-
-
 // ============================================================
 // SEND DATA TO FLASK BACKEND
 // ============================================================
@@ -444,32 +374,24 @@ void sendDataToServer(
   float distance
 ) {
 
-  //
   // Send only if WiFi connected
-  //
 
   if (WiFi.status() == WL_CONNECTED) {
 
     HTTPClient http;
 
-    //
     // Connect to Flask backend
-    //
-
+    
     http.begin(serverName);
 
-    //
     // JSON content type
-    //
 
     http.addHeader(
       "Content-Type",
       "application/json"
     );
 
-    //
     // Create JSON object
-    //
 
     StaticJsonDocument<300> doc;
 
@@ -491,9 +413,7 @@ void sendDataToServer(
     doc["alarm"] =
         alarmTriggered;
 
-    //
     // Convert JSON to string
-    //
 
     String jsonString;
 
@@ -502,16 +422,12 @@ void sendDataToServer(
       jsonString
     );
 
-    //
     // Send POST request
-    //
 
     int httpResponseCode =
         http.POST(jsonString);
 
-    //
     // Debug output
-    //
 
     Serial.println();
 
@@ -523,9 +439,7 @@ void sendDataToServer(
       httpResponseCode
     );
 
-    //
     // Print backend response
-    //
 
     String response =
         http.getString();
@@ -534,9 +448,7 @@ void sendDataToServer(
       response
     );
 
-    //
     // Close connection
-    //
 
     http.end();
   }
@@ -549,40 +461,30 @@ void sendDataToServer(
   }
 }
 
-
-
 // ============================================================
 // SETUP
 // ============================================================
 
 void setup() {
 
-  //
   // Start serial monitor
-  //
-
+  
   Serial.begin(115200);
 
   delay(1000);
 
-  //
   // Start DHT sensor
-  //
 
   dht.begin();
 
-  //
   // Configure PIR
-  //
 
   pinMode(
     PIR_PIN,
     INPUT
   );
 
-  //
   // Configure ultrasonic
-  //
 
   pinMode(
     TRIG_PIN,
@@ -594,9 +496,7 @@ void setup() {
     INPUT
   );
 
-  //
   // Configure RGB LED
-  //
 
   pinMode(
     RED_PIN,
@@ -613,18 +513,14 @@ void setup() {
     OUTPUT
   );
 
-  //
   // Configure buzzer
-  //
 
   pinMode(
     BUZZER_PIN,
     OUTPUT
   );
 
-  //
   // Initial state
-  //
 
   buzzerOff();
 
@@ -633,8 +529,6 @@ void setup() {
     LOW,
     HIGH
   );
-
-
 
   // ========================================================
   // CONNECT TO WIFI
@@ -675,8 +569,6 @@ void setup() {
     WiFi.localIP()
   );
 
-
-
   // ========================================================
   // STARTUP MESSAGE
   // ========================================================
@@ -716,27 +608,21 @@ void setup() {
   Serial.println();
 }
 
-
-
 // ============================================================
 // MAIN LOOP
 // ============================================================
 
 void loop() {
 
-  //
   // ========================================================
   // HANDLE KEYPAD
   // ========================================================
-  //
 
   char key = keypad.getKey();
 
   if (key) {
 
-    //
     // Pause alarm mode
-    //
 
     if (
         key == '#' &&
@@ -745,9 +631,7 @@ void loop() {
 
       disarmMode = true;
 
-      //
       // Pause buzzer
-      //
 
       buzzerOff();
 
@@ -760,9 +644,7 @@ void loop() {
       enteredPIN = "";
     }
 
-    //
     // ARM SYSTEM
-    //
 
     else if (key == 'A') {
 
@@ -787,16 +669,12 @@ void loop() {
 
       enteredPIN = "";
     }
-
-    //
+      
     // DISARM SYSTEM
-    //
 
     else if (key == 'B') {
 
-      //
       // Allow disarm only after #
-      //
 
       if (disarmMode) {
 
@@ -816,9 +694,7 @@ void loop() {
             "WRONG PIN"
           );
 
-          //
           // Resume alarm
-          //
 
           buzzerOn();
 
@@ -846,9 +722,7 @@ void loop() {
       enteredPIN = "";
     }
 
-    //
     // CLEAR PIN
-    //
 
     else if (key == '*') {
 
@@ -861,35 +735,25 @@ void loop() {
       );
     }
 
-    //
     // STORE PIN DIGITS
-    //
 
     else {
 
       enteredPIN += key;
 
-      //
       // Hide actual digits
-      //
 
       Serial.print("*");
     }
   }
 
-
-
-  //
   // ========================================================
   // SECURITY LOGIC
   // ========================================================
-  //
-
+  
   if (systemArmed) {
 
-    //
     // Read sensor values
-    //
 
     float temperature =
         dht.readTemperature();
@@ -903,11 +767,7 @@ void loop() {
     float distance =
         getDistance();
 
-
-
-    //
     // Display sensor readings
-    //
 
     Serial.println();
 
@@ -941,35 +801,25 @@ void loop() {
       motion
     );
 
-
-
-    //
     // Intrusion detection logic
-    //
 
     bool intrusionDetected = false;
 
-    //
     // Motion detected
-    //
 
     if (motion == HIGH) {
 
       intrusionDetected = true;
     }
 
-    //
     // Object too close
-    //
 
     if (distance < 15) {
 
       intrusionDetected = true;
     }
 
-    //
     // Trigger alarm only once
-    //
 
     if (
         intrusionDetected &&
@@ -979,11 +829,7 @@ void loop() {
       triggerAlarm();
     }
 
-
-
-    //
     // Send data to Flask backend
-    //
 
     sendDataToServer(
 
@@ -996,11 +842,7 @@ void loop() {
       distance
     );
 
-
-
-    //
     // Auto reset alarm
-    //
 
     if (alarmTriggered) {
 
@@ -1018,10 +860,8 @@ void loop() {
         disarmMode = false;
 
         buzzerOff();
-
-        //
+        
         // Return to GREEN
-        //
 
         setColor(
           LOW,
@@ -1035,19 +875,16 @@ void loop() {
       }
     }
   }
-
-  //
+  
   // System disarmed
-  //
+  
 
   else {
 
     buzzerOff();
   }
-
-  //
+  
   // Delay for stability
-  //
-
+  
   delay(3000);
 }
